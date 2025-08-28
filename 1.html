@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DXN Premium — Single File Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{--grad:linear-gradient(120deg,#0b1220,#071025 40%,#021214);}
+    body{background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(34,197,94,.10), transparent),
+      radial-gradient(1200px 600px at 90% 110%, rgba(59,130,246,.06), transparent),
+      var(--grad); color:#e6eef3; font-family:Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    .glass{background:rgba(255,255,255,.03);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.04)}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.6rem 1rem;border:1px solid rgba(255,255,255,.06);}
+    .btn-primary{background:linear-gradient(135deg,#22c55e,#3b82f6);color:#fff;box-shadow:0 12px 30px rgba(34,197,94,.12)}
+    .btn-ghost{background:rgba(255,255,255,.04);}
+    .badge{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);padding:.2rem .6rem;border-radius:999px;font-size:.8rem}
+    .card-hover{transition:transform .25s, box-shadow .25s}
+    .card-hover:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+    .pulse{position:relative;overflow:hidden}
+    .pulse::after{content:"";position:absolute;inset:-6px;border-radius:999px;animation:pulse 1.4s ease-out infinite;box-shadow:0 0 0 0 rgba(59,130,246,.45)}
+    @keyframes pulse{to{box-shadow:0 0 0 16px rgba(59,130,246,0);}}
+    .ripple{position:relative;overflow:hidden}
+    .ripple:active::after{content:"";position:absolute;transform:translate(-50%,-50%);left:var(--x);top:var(--y);width:10px;height:10px;background:#22c55e;border-radius:50%;opacity:.7;animation:ripple .6s linear}
+    @keyframes ripple{to{opacity:0;transform:translate(-50%,-50%) scale(14);}}
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:60;background:rgba(0,0,0,.6);padding:1.5rem}
+    .modal.open{display:flex}
+    .modal-content{background:linear-gradient(180deg, rgba(10,14,20,0.98), rgba(6,8,12,0.98));border-radius:12px;padding:1rem;max-height:92vh;overflow:auto;width:100%;max-width:980px;border:1px solid rgba(255,255,255,.03)}
+    .small-muted{color:#cbd5e1;font-size:0.95rem}
+    .navlink{position:relative}
+    .navlink::after{content:'';position:absolute;left:0;bottom:-6px;height:2px;width:0;background:#22c55e;transition:width .22s}
+    .navlink:hover::after{width:100%}
+    html{scroll-behavior:smooth}
+    .tab-btn[aria-selected="true"]{background:linear-gradient(135deg,#22c55e,#3b82f6);color:white}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media (max-width:640px){ .modal-content{padding:.75rem} }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <nav class="glass mx-auto max-w-7xl mt-4 px-4 md:px-6 py-3 rounded-2xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-green-500 to-blue-500"></div>
+        <h1 class="text-lg md:text-xl font-extrabold tracking-tight">DXN Premium</h1>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-sm">
+        <a class="navlink" href="#hero">Home</a>
+        <a class="navlink" href="#about">About</a>
+        <a class="navlink" href="#featured">Featured</a>
+        <a class="navlink" href="#promo">Offers</a>
+        <a class="navlink" href="#catalog">Products</a>
+        <a class="navlink" href="#faq">FAQ</a>
+        <a class="navlink" href="#contact">Contact</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="helloTag" class="hidden md:inline small-muted"></span>
+        <button id="authBtn" class="btn btn-ghost ripple">Login / Sign up</button>
+        <button id="mobileToggle" class="md:hidden glass px-3 py-2 rounded-xl">☰</button>
+      </div>
+    </nav>
+    <div id="mobileMenu" class="hidden md:hidden mx-4 mt-2 glass rounded-2xl p-3">
+      <a href="#hero" class="block py-2">Home</a>
+      <a href="#about" class="block py-2">About</a>
+      <a href="#featured" class="block py-2">Featured</a>
+      <a href="#promo" class="block py-2">Offers</a>
+      <a href="#catalog" class="block py-2">Products</a>
+      <a href="#faq" class="block py-2">FAQ</a>
+      <a href="#contact" class="block py-2">Contact</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="hero" class="min-h-[70vh] flex items-center justify-center pt-28">
+    <div class="glass max-w-4xl w-[94%] md:w-[82%] rounded-3xl p-6 md:p-10 shadow-glass">
+      <div class="md:flex md:items-center gap-6">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Discover Wellness, Simply</h2>
+          <p class="small-muted mb-4">Fast, distraction-free catalog with bilingual audio, deep product information, and a friendly greeting after you sign in.</p>
+          <div class="flex gap-3">
+            <a href="#catalog" class="btn btn-primary pulse">Explore Products</a>
+            <button id="quickSpeak" class="btn btn-ghost ripple" aria-label="Play site intro">🔊 Site Intro</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="site-content" class="mt-6">
+
+    <!-- About -->
+    <section id="about" class="max-w-6xl mx-auto px-4 md:px-6 py-12">
+      <div class="glass rounded-2xl p-6 md:p-8 shadow-glass">
+        <h2 class="text-2xl md:text-3xl font-extrabold mb-3">About DXN Premium</h2>
+        <p class="small-muted mb-4">DXN Premium is a curated, text-first catalog for DXN products — focused on clarity, trust, and usability. Designed to work quickly on low-bandwidth devices and to support bilingual audio, it brings product knowledge front and center.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold">Our Mission</h3>
+            <p class="small-muted">To simplify wellness choices with clear, practical, and trustworthy product information so customers and distributors can make informed decisions.</p>
+          </div>
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold">Our Vision</h3>
+            <p class="small-muted">To be the go-to distraction-free marketplace reference for DXN products across regions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured -->
+    <section id="featured" class="max-w-7xl mx-auto px-4 md:px-6 py-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl md:text-3xl font-extrabold">Featured Products</h2>
+        <a href="#catalog" class="btn btn-ghost ripple rounded-full">See All</a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="featuredGrid"></div>
+    </section>
+
+    <!-- Promo -->
+    <section id="promo" class="max-w-7xl mx-auto px-4 md:px-6 py-6">
+      <div class="glass rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="zoom-in">
+        <div>
+          <div class="badge mb-2">Limited Time</div>
+          <h3 class="text-xl font-bold">Buy 2 DXN Coffees, Get 1 Free</h3>
+          <p class="small-muted">Offer applies with participating distributors. Check local availability.</p>
+        </div>
+        <a href="#catalog" class="btn btn-primary pulse">Shop the Offer</a>
+      </div>
+    </section>
+
+    <!-- Catalog -->
+    <section id="catalog" class="max-w-7xl mx-auto px-4 md:px-6 py-12">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <h2 class="text-2xl md:text-3xl font-extrabold">Product Catalog</h2>
+        <div class="flex items-center gap-3">
+          <input id="search" placeholder="Search products..." class="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 outline-none" />
+          <select id="filter" class="bg-white/5 border border-white/10 rounded-2xl px-3 py-2">
+            <option value="all">All Categories</option>
+            <option value="coffee">Coffee</option>
+            <option value="beverage">Beverage</option>
+            <option value="supplement">Supplement</option>
+            <option value="personal">Personal Care</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Product cards injected here -->
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="max-w-6xl mx-auto px-4 md:px-6 py-12">
+      <h2 class="text-2xl md:text-3xl font-extrabold mb-4">FAQ</h2>
+      <div class="space-y-3">
+        <details class="glass rounded-lg p-4"><summary class="font-semibold">Are DXN products authentic?</summary><p class="small-muted mt-2">Yes, products are sourced from official DXN catalogs and authorized distributors.</p></details>
+        <details class="glass rounded-lg p-4"><summary class="font-semibold">Do you provide delivery?</summary><p class="small-muted mt-2">Delivery depends on distributor; many regions have doorstep options.</p></details>
+        <details class="glass rounded-lg p-4"><summary class="font-semibold">Can I return products?</summary><p class="small-muted mt-2">Returns accepted per distributor policy; unopened items generally allowed within policy window.</p></details>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="max-w-6xl mx-auto px-4 md:px-6 py-12">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-xl md:text-2xl font-extrabold">Contact Us</h3>
+          <p class="small-muted">Questions about ingredients, usage, bulk orders? Reach out via WhatsApp or Email.</p>
+          <div class="flex gap-3 mt-3">
+            <a class="btn btn-ghost ripple rounded-full" href="https://wa.me/0000000000" target="_blank">WhatsApp</a>
+            <a class="btn btn-ghost ripple rounded-full" href="mailto:hello@example.com">Email</a>
+          </div>
+        </div>
+        <form id="contactForm" class="glass p-5 rounded-xl">
+          <input id="cname" placeholder="Name" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+          <input id="cemail" placeholder="Email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+          <textarea id="cmsg" placeholder="Message" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" rows="4" required></textarea>
+          <button class="btn btn-primary w-full ripple" type="submit">Send Message</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-sm text-slate-400 pb-6">© 2025 DXN Premium — Catalog</footer>
+
+  <!-- Modal template (Product details) -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModal" style="float:right;background:transparent;border:none;color:#cbd5e1;font-size:1.25rem">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal" aria-hidden="true">
+    <div class="modal-content max-w-md" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button id="closeAuth" style="float:right;background:transparent;border:none;color:#cbd5e1;font-size:1.25rem">✕</button>
+      <h2 id="authTitle" class="text-xl font-bold mb-4">Welcome</h2>
+      <div role="tablist" class="flex gap-2 mb-3">
+        <button class="tab-btn btn btn-ghost ripple" data-tab="login" aria-selected="true">Login</button>
+        <button class="tab-btn btn btn-ghost ripple" data-tab="signup" aria-selected="false">Sign up</button>
+      </div>
+      <form id="loginForm" class="glass p-4 rounded-lg">
+        <label class="sr-only" for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+        <label class="sr-only" for="loginPass">Password</label>
+        <input id="loginPass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+        <button class="btn btn-primary w-full ripple" type="submit">Login</button>
+      </form>
+      <form id="signupForm" class="glass p-4 rounded-lg hidden">
+        <label class="sr-only" for="signupName">Full Name</label>
+        <input id="signupName" placeholder="Full name" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+        <label class="sr-only" for="signupEmail">Email</label>
+        <input id="signupEmail" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+        <label class="sr-only" for="signupPass">Password</label>
+        <input id="signupPass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2 mb-3" required />
+        <button class="btn btn-primary w-full ripple" type="submit">Create account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    AOS.init({ once: true });
+
+    // Mobile menu
+    document.getElementById('mobileToggle').addEventListener('click', ()=> {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+
+    // Ripple effect helper
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.ripple');
+      if(!btn) return;
+      const rect = btn.getBoundingClientRect();
+      btn.style.setProperty('--x', (e.clientX - rect.left) + 'px');
+      btn.style.setProperty('--y', (e.clientY - rect.top) + 'px');
+    });
+
+    // Simple toast
+    function toastSuccess(title, text=''){
+      Swal.fire({icon:'success', title, text, timer:2000, showConfirmButton:false});
+    }
+    function toastError(title, text=''){
+      Swal.fire({icon:'error', title, text, timer:2200, showConfirmButton:false});
+    }
+
+    // Auth system (localStorage only)
+    const AUTH_KEY='dxn_users_v1';
+    const SESSION_KEY='dxn_session_v1';
+
+    function getUsers(){ try { return JSON.parse(localStorage.getItem(AUTH_KEY)||'[]'); } catch(e){ return []; } }
+    function setUsers(a){ localStorage.setItem(AUTH_KEY, JSON.stringify(a)); }
+    function getSession(){ try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch(e){ return null; } }
+    function setSession(obj){ localStorage.setItem(SESSION_KEY, JSON.stringify(obj)); }
+    function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+    const authModal=document.getElementById('authModal');
+    const closeAuth=document.getElementById('closeAuth');
+    const authBtn=document.getElementById('authBtn');
+    const tabBtns=[...document.querySelectorAll('.tab-btn')];
+    const loginForm=document.getElementById('loginForm');
+    const signupForm=document.getElementById('signupForm');
+    const helloTag=document.getElementById('helloTag');
+
+    function openAuth(tab='login'){
+      authModal.classList.add('open');
+      authModal.setAttribute('aria-hidden','false');
+      switchTab(tab);
+    }
+    function closeAuthModal(){ authModal.classList.remove('open'); authModal.setAttribute('aria-hidden','true'); }
+    authBtn.addEventListener('click', ()=> openAuth('login'));
+    closeAuth.addEventListener('click', closeAuthModal);
+
+    tabBtns.forEach(b=>{
+      b.addEventListener('click', ()=> switchTab(b.dataset.tab));
+    });
+
+    function switchTab(tab){
+      tabBtns.forEach(b=> b.setAttribute('aria-selected', b.dataset.tab===tab ? 'true' : 'false'));
+      loginForm.classList.toggle('hidden', tab!=='login');
+      signupForm.classList.toggle('hidden', tab!=='signup');
+    }
+
+    signupForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name=document.getElementById('signupName').value.trim();
+      const email=document.getElementById('signupEmail').value.trim().toLowerCase();
+      const pass=document.getElementById('signupPass').value;
+      if(!name || !email || !pass) return toastError('All fields required');
+      const users=getUsers();
+      if(users.some(u=>u.email===email)) return toastError('Email already exists');
+      users.push({name,email,pass});
+      setUsers(users);
+      toastSuccess('Account created');
+      switchTab('login');
+    });
+
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass=document.getElementById('loginPass').value;
+      const user=getUsers().find(u=>u.email===email && u.pass===pass);
+      if(!user) return toastError('Invalid credentials');
+      setSession({name:user.name,email:user.email});
+      closeAuthModal();
+      sayHello(user.name);
+      renderGreeting();
+    });
+
+    function sayHello(name){
+      helloTag.textContent = `Hello, ${name}!`;
+      helloTag.classList.remove('hidden');
+      speak(`Hello ${name}, welcome to DXN Premium.`, 'en');
+      speak(`नमस्ते ${name}, डीएक्सएन प्रीमियम में आपका स्वागत है।`, 'hi');
+    }
+
+    function renderGreeting(){
+      const s=getSession();
+      if(s && s.name){
+        helloTag.textContent = `Hello, ${s.name}!`;
+        helloTag.classList.remove('hidden');
+        authBtn.textContent = 'Logout';
+        authBtn.onclick = ()=>{ clearSession(); helloTag.classList.add('hidden'); authBtn.textContent='Login / Sign up'; authBtn.onclick=()=>openAuth('login'); toastSuccess('Logged out'); };
+      } else {
+        helloTag.classList.add('hidden');
+        authBtn.textContent='Login / Sign up';
+        authBtn.onclick=()=>openAuth('login');
+      }
+    }
+    renderGreeting();
+
+    // Product data (images optional; hidden if missing)
+    const baseParagraphEN = `DXN focuses on carefully sourced ingredients, transparent labeling, and practical guidance so that everyday customers can understand the “why” behind each product. This description explains what the product is, who it is for, and how it fits into a healthy routine. You will find sections on benefits, key ingredients, usage tips, safety notes, storage, sustainability practices, and buying advice. We avoid exaggerated claims and emphasize real-life use: taste, texture, convenience, and value for money. Whether you are new to wellness products or a long‑time customer, the goal is to help you make a thoughtful choice that suits your habits and budget.`;
+
+    const baseParagraphHI = `DXN उत्पादों का उद्देश्य साफ‑सुथरी जानकारी, भरोसेमंद सोर्सिंग और आसान उपयोग पर जोर देना है। इस विवरण में आप जानेंगे कि यह उत्पाद क्या है, किसके लिए है, और आपकी दिनचर्या में इसे कैसे शामिल किया जा सकता है। हम लाभ, प्रमुख अवयव, उपयोग के तरीके, सुरक्षा, भंडारण, स्थिरता और खरीद सलाह—सभी विषय सरल भाषा में कवर करते हैं। बढ़ा‑चढ़ाकर दावे करने के बजाय हम वास्तविक अनुभव—स्वाद, सुविधा और मूल्य—पर ध्यान देते हैं, ताकि आप अपने लिए सही विकल्प चुन सकें।`;
+
+    function buildLongText(productName){
+      // Compose ~1000+ words by repeating varied sections.
+      const sections = [
+        `Overview — ${productName}: ` + baseParagraphEN,
+        `Benefits: ${productName} is designed to support daily wellness with a practical, balanced approach. It aims to complement—not replace—healthy food, sleep, hydration, and movement. Customers often look for steady energy, digestive comfort, clarity of mind, or healthy skin; this product explains how its ingredients relate to those goals in a reasonable way.`,
+        `Ingredients & Quality: DXN follows established quality checks, traceability, and hygiene standards from sourcing to packaging. The ingredients are chosen for consistency, taste, and compatibility. Where possible, we explain the role of each key ingredient, typical serving sizes, and how the formulation avoids unnecessary additives.`,
+        `Usage & Taste: Clear directions minimize confusion. We include simple serving guidance, timing suggestions (morning vs. evening), and compatible foods or beverages. Taste matters: people stick with products that are enjoyable. We share realistic notes on flavor and texture so you know what to expect.`,
+        `Safety & Interactions: Always consider personal conditions and consult a professional if you have concerns. Keep servings within labeled guidance. If you are pregnant, nursing, or taking medications, seek advice. We also outline common sense storage, allergy cautions, and how to discontinue use if discomfort occurs.`,
+        `Sustainability & Packaging: Practical steps like right‑sized packaging, minimal plastics, and responsible sourcing reduce waste. We suggest ways to reuse containers and remind you to follow local disposal rules. Transparent practices build trust over time.`,
+        `Buying & Value: Pricing varies by region and distributor. Value is more than the sticker price; consider servings per container, ingredient quality, convenience, and how consistently you will use the product. We include tips to compare fairly and avoid overbuying.`,
+        `Hindi Summary — ${productName}: ` + baseParagraphHI,
+        `उपयोग विधि: पैक पर लिखे निर्देशों के अनुसार सेविंग लें। सुबह या शाम—जो भी आपके लिए सुविधाजनक हो—नियमितता रखें। स्वाद को बेहतर बनाने के लिए आप पानी, दूध या किसी उपयुक्त पेय के साथ ले सकते हैं। किसी प्रकार की असुविधा होने पर उपयोग बंद करें और विशेषज्ञ से सलाह लें।`,
+        `भंडारण और सुरक्षा: पैक बंद रखें, नमी और धूप से बचाएँ। बच्चों की पहुँच से दूर रखें। यदि आपको किसी अवयव से एलर्जी है तो उपयोग से पहले जाँचें। गर्भवती या स्तनपान कराने वाली महिलाएँ तथा दवा लेने वाले लोग चिकित्सक से सलाह लें।`,
+        `खरीद एवं मूल्य: क्षेत्र के अनुसार कीमत बदल सकती है। मूल्यांकन करते समय प्रति‑सेविंग लागत, गुणवत्ता और सुविधा को जोड़कर देखें, ताकि समझदारी से निर्णय हो सके।`
+      ];
+
+      // Expand to ~1000 words by repeating with small variations.
+      const extras = [];
+      for(let i=0;i<6;i++){
+        extras.push(`Deep dive ${i+1}: ${productName} focuses on consistency and routine. Customers report that planning servings around meals, staying hydrated, and sleeping well improve the overall experience. Keep expectations realistic; small, steady changes add up.`);
+      }
+      const all = sections.concat(extras);
+      // Repeat until length >= 1000 words
+      let text = '';
+      let words = 0;
+      let idx = 0;
+      while(words < 1000){
+        const chunk = all[idx % all.length];
+        text += (text ? '\n\n' : '') + chunk;
+        words = text.trim().split(/\s+/).length;
+        idx++;
+      }
+      return text;
+    }
+
+    const products = [
+      { id:'lionmane', name:"Lion's Mane Capsules", img:"images (1).jpeg", price:"₹1,200", category:"supplement", preview:"Supports brain health, memory, and focus with natural Lion's Mane mushroom extract." },
+      { id:'zhimocha', name:"DXN Zhi Mocha", img:"61hD5FMvETL._UF1000,1000_QL80_.jpg", price:"₹850", category:"beverage", preview:"Zhi Mocha combines coffee and cocoa with Ganoderma for an indulgent, balanced mocha experience." },
+      { id:'spirulina', name:"DXN Spirulina Tablets", img:"download (2).jpeg", price:"₹950", category:"supplement", preview:"Nutrient-dense Spirulina providing protein, vitamins, minerals and antioxidants." },
+      { id:'ganozhi_soap', name:"Ganozhi Soap", img:"download (3).jpeg", price:"₹150", category:"personal", preview:"Gentle cleansing bar infused with Ganoderma extract for daily use." },
+      { id:'dish_clean', name:"DXN Dish Clean", img:"download (4).jpeg", price:"₹180", category:"personal", preview:"Biodegradable dishwashing liquid effective on grease and gentle on hands." },
+      { id:'ganocelium', name:"Ganocelium (GL) Powder", img:"download (5).jpeg", price:"₹1,400", category:"supplement", preview:"Ganoderma mycelium powder — mix into beverages or smoothies." },
+      { id:'talc', name:"DXN Talcum Powder", img:"download (6).jpeg", price:"₹220", category:"personal", preview:"Light, refreshing talcum powder to keep skin dry and comfortable." }
+    ];
+
+    // Fill featured with first three
+    const featuredGrid = document.getElementById('featuredGrid');
+    ['lionmane','zhimocha','spirulina'].forEach(id=>{
+      const p = products.find(x=>x.id===id);
+      const card = document.createElement('div');
+      card.className = 'glass p-5 rounded-xl card-hover';
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.name}" style="width:100%;height:220px;object-fit:contain;border-radius:10px" onerror="this.style.display='none'"/>
+        <div class="mt-3 flex items-start justify-between">
+          <h4 class="font-bold">${p.name}</h4>
+          <span class="badge">${p.price}</span>
+        </div>
+        <p class="small-muted mt-2">${p.preview}</p>
+        <div class="mt-3 flex gap-2 flex-wrap">
+          <button class="btn btn-primary pulse read-more" data-id="${p.id}">Read More</button>
+          <button class="btn btn-ghost ripple speak-en" data-id="${p.id}">🔊 English</button>
+          <button class="btn btn-ghost ripple speak-hi" data-id="${p.id}">🔊 हिंदी</button>
+        </div>
+      `;
+      featuredGrid.appendChild(card);
+    });
+
+    const grid = document.getElementById('grid');
+
+    function render(list){
+      grid.innerHTML = '';
+      list.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'glass p-5 rounded-xl card-hover';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" style="width:100%;height:220px;object-fit:contain;border-radius:10px" onerror="this.style.display='none'"/>
+          <div class="mt-3 flex items-start justify-between">
+            <h3 class="font-bold">${p.name}</h3>
+            <span class="badge">${p.price}</span>
+          </div>
+          <p class="small-muted mt-2">${p.preview}</p>
+          <div class="mt-3 flex gap-2 flex-wrap">
+            <button class="btn btn-primary pulse read-more" data-id="${p.id}">Read More</button>
+            <button class="btn btn-ghost ripple speak-en" data-id="${p.id}">🔊 English</button>
+            <button class="btn btn-ghost ripple speak-hi" data-id="${p.id}">🔊 हिंदी</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      bindCardEvents();
+    }
+
+    function bindCardEvents(){
+      document.querySelectorAll('.read-more').forEach(btn=>{
+        btn.addEventListener('click', ()=> openModal(btn.getAttribute('data-id')));
+      });
+      document.querySelectorAll('.speak-en').forEach(btn=>{
+        btn.addEventListener('click', ()=> speakProduct(btn.getAttribute('data-id'), 'en'));
+      });
+      document.querySelectorAll('.speak-hi').forEach(btn=>{
+        btn.addEventListener('click', ()=> speakProduct(btn.getAttribute('data-id'), 'hi'));
+      });
+    }
+
+    render(products);
+
+    // Search & filter
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('filter').addEventListener('change', applyFilters);
+
+    function applyFilters(){
+      const q = document.getElementById('search').value.toLowerCase();
+      const f = document.getElementById('filter').value;
+      const out = products.filter(p=>{
+        const inCat = f==='all' ? true : p.category===f;
+        const inText = p.name.toLowerCase().includes(q) || p.preview.toLowerCase().includes(q);
+        return inCat && inText;
+      });
+      render(out);
+    }
+
+    // Modal (product details)
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modalBody');
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    function openModal(id){
+      const p = products.find(x=>x.id===id);
+      if(!p) return;
+      const longText = buildLongText(p.name);
+      modalBody.innerHTML = `<h2 id="modalTitle" class="text-xl font-bold mb-2">${p.name}</h2>
+        <img src="${p.img}" alt="${p.name}" style="width:100%;height:280px;object-fit:contain;border-radius:10px" onerror="this.style.display='none'"/>
+        <p class="small-muted mt-2"><strong>Price:</strong> ${p.price} • <strong>Category:</strong> ${p.category}</p>
+        <div class="mt-3 flex gap-2 flex-wrap">
+          <button class="btn btn-primary pulse" onclick="speakProduct('${p.id}','en')">🔊 English</button>
+          <button class="btn btn-ghost ripple" onclick="speakProduct('${p.id}','hi')">🔊 हिंदी</button>
+          <button class="btn btn-ghost ripple" onclick="stopSpeaking()">⏹ Stop</button>
+        </div>
+        <article class="mt-4 small-muted" style="line-height:1.7;white-space:pre-wrap">${longText}</article>
+      `;
+      modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    }
+    function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+
+    // Contact form
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('cname').value.trim();
+      const email = document.getElementById('cemail').value.trim();
+      const msg = document.getElementById('cmsg').value.trim();
+      if(!name||!email||!msg){ toastError('Please complete all fields'); return; }
+      toastSuccess('Thanks! We will contact you shortly.');
+      this.reset();
+    });
+
+    // Web Speech API — English/Hindi
+    function speak(text, lang){
+      if(!('speechSynthesis' in window)){ toastError('Speech not supported in this browser'); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = (lang==='hi') ? 'hi-IN' : 'en-IN';
+      u.rate = 1.0; u.pitch = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+    function stopSpeaking(){ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+
+    function speakProduct(id, lang){
+      const p = products.find(x=>x.id===id);
+      if(!p) return;
+      // Short bilingual summary for speech
+      const en = `${p.name}. ${p.preview} Price ${p.price}. For more details open the product.`;
+      const hi = `${p.name}. ${p.preview}. कीमत ${p.price}। अधिक जानकारी के लिए उत्पाद खोलें।`;
+      speak(lang==='hi' ? hi : en, lang);
+    }
+
+    document.getElementById('quickSpeak').addEventListener('click', ()=>{
+      const s = getSession();
+      const name = s && s.name ? s.name : 'friend';
+      speak(`Welcome ${name}. Browse DXN Premium products with English and Hindi audio.`, 'en');
+    });
+
+    // Greeting on load if already logged in
+    const sessionNow = getSession();
+    if(sessionNow && sessionNow.name){
+      helloTag.textContent = `Hello, ${sessionNow.name}!`;
+      helloTag.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
